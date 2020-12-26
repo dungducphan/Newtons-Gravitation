@@ -6,17 +6,9 @@
 
 class FPS {
 public:
-    /// @brief Constructor with initialization.
-    ///
     FPS() : mFrame(0), mFps(0) {}
 
-    /// @brief Update the frame count.
-    ///
-
-
-    /// @brief Get the current FPS count.
-    /// @return FPS count.
-    const unsigned int getFPS() const { return mFps; }
+    [[nodiscard]] unsigned int getFPS() const { return mFps; }
 
 private:
     unsigned int mFrame;
@@ -108,11 +100,42 @@ int main() {
             }
         }
 
+        // Update position
         for (int i = 0; i < deltaVs.size(); i++) {
             if (!planets[i].isStar) {
                 planets[i].v += deltaVs[i];
                 sf::Vector2<fpt> deltaS = planets[i].v * deltaT;
                 planets[i].p += deltaS;
+            }
+        }
+
+        // Collision detection
+        for (auto i = planets.begin(); i != planets.end();) {
+            bool collision = false;
+            auto j = i + 1;
+            for (; j != planets.end();) {
+                if (*i != *j) {
+                    sf::Vector2<fpt> direction = i->p - j->p;
+                    fpt distance = sfAbs(direction);
+                    if (distance < 30) {
+                        collision = true;
+                        break;
+                    } else {
+                        j++;
+                    }
+                }
+            }
+            if (collision) {
+                if (j->isStar) {
+                    j->m += i->m;
+                    i = planets.erase(i);
+                } else {
+                    i->m += j->m;
+                    planets.erase(j);
+                    i++;
+                }
+            } else {
+                i++;
             }
         }
 
