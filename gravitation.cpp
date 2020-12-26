@@ -1,9 +1,43 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <sstream>
 #include "utils.hpp"
+
+
+class FPS {
+public:
+    /// @brief Constructor with initialization.
+    ///
+    FPS() : mFrame(0), mFps(0) {}
+
+    /// @brief Update the frame count.
+    ///
+
+
+    /// @brief Get the current FPS count.
+    /// @return FPS count.
+    const unsigned int getFPS() const { return mFps; }
+
+private:
+    unsigned int mFrame;
+    unsigned int mFps;
+    sf::Clock mClock;
+
+public:
+    void update() {
+        if (mClock.getElapsedTime().asSeconds() >= 1.f) {
+            mFps = mFrame;
+            mFrame = 0;
+            mClock.restart();
+        }
+
+        ++mFrame;
+    }
+};
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Newton's gravitation", sf::Style::Default);
+    window.setFramerateLimit(60);
     sf::Event event;
     std::default_random_engine engine(NOW);
     std::uniform_real_distribution<fpt> red_dist(200, 255);
@@ -12,14 +46,23 @@ int main() {
     std::uniform_real_distribution<fpt> alpha_dist(100, 150);
     std::vector<Planet> planets;
 
-    planets.emplace_back(sf::Vector2<fpt>(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), 1000000000, sf::Vector2<fpt>(0.f, -0.005),
+    sf::Font font;
+    if (!font.loadFromFile("DejaVuSans.ttf")) {
+        LOG_ERROR("Can not load DejaVuSans.ttf. Exit");
+        std::exit(1);
+    }
+
+    planets.emplace_back(sf::Vector2<fpt>(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), 1000000000,
+                         sf::Vector2<fpt>(0.f, -0.005),
                          sf::Color(200, 32, 125, 200), 50);
     planets.back().isStar = true;
 
 
     float deltaT = 0.f;
     float speed = 10000.0f;
+    FPS fps;
 
+    sf::Clock frameClock;
     sf::Clock clock;
     while (window.isOpen()) {
         while (window.pollEvent(event)) {
@@ -44,6 +87,10 @@ int main() {
                 }
 
                 planets.push_back(planet);
+            }
+            if (event.type == sf::Event::EventType::MouseWheelMoved) {
+                fpt scrolled = event.mouseWheel.delta;
+                speed += scrolled * 100.0f;
             }
         }
 
@@ -73,6 +120,24 @@ int main() {
         for (auto &planet : planets) {
             planet.draw(window);
         }
+
+
+        std::stringstream ss;
+        ss << "Speed: " << (int) speed;
+        sf::Text speedText{ss.str(), font, 10};
+        speedText.setPosition(10, 10);
+        speedText.setFillColor(sf::Color::White);
+        window.draw(speedText);
+
+
+        ss = std::stringstream{};
+        fps.update();
+        ss << "FPS: " << fps.getFPS();
+        sf::Text fpsText{ss.str(), font, 10};
+        fpsText.setPosition(10, 25);
+        fpsText.setFillColor(sf::Color::White);
+        window.draw(fpsText);
+
         window.display();
         deltaT = clock.restart().asSeconds() * speed;
     }
