@@ -5,12 +5,13 @@
 #include <ostream>
 #include <random>
 #include <chrono>
+#include <iostream>
 
 #define PI 3.14159265
 #define DEG2RAD(x) ((x)*PI/180)
 #define RAD2DEG(x) ((x)*180/PI)
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 1200
+#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 1000
 #define CENTER sf::Vector2f{WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2}
 #define UGC 0.00000000006674f
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -29,7 +30,7 @@
 
 typedef double fpt;
 
-class Planet: public sf::CircleShape{
+class Planet{
 public:
     // Velocity vector
     sf::Vector2<fpt> v;
@@ -40,9 +41,15 @@ public:
     // Mass in kg. Will also be used als weight in Newton for simplification
     fpt m{};
 
+    fpt r;
+
+    sf::Color color;
+
     bool isStar = false;
 
-    Planet(sf::Vector2<fpt> p, float m);
+    Planet(sf::Vector2<fpt> p, float m,  sf::Color color, fpt r);
+
+    Planet(sf::Vector2<fpt> p, float m, sf::Vector2<fpt> v,  sf::Color color, fpt r);
 
     void draw(sf::RenderWindow& window) const;
 

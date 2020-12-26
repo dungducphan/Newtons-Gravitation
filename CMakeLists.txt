@@ -21,3 +21,9 @@ target_link_libraries(gravitation
         sfml-window
         sfml-system
         m)
+
+
+file(GLOB resource_files "${CMAKE_CURRENT_SOURCE_DIR}/data/*")
+foreach (item ${resource_files})
+    FILE(COPY ${item} DESTINATION "${CMAKE_BINARY_DIR}")
+endforeach ()
