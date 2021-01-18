@@ -29,8 +29,6 @@ public:
 
     Planet(sf::Vector2<fpt> p, fpt m, sf::Vector2<fpt> v, sf::Color color, fpt r, const sf::Texture& texture);
 
-    int32_t rotation = 0;
-
     void draw(sf::RenderWindow &window);
 
     [[nodiscard]] sf::Vector2<fpt> gForce(const std::vector<Planet> &planets) const;

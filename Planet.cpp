@@ -13,24 +13,20 @@ Planet::Planet(sf::Vector2<fpt> p, fpt m, sf::Vector2<fpt> v, sf::Color color, f
 }
 
 void Planet::draw(sf::RenderWindow &window) {
-    // Create image
+    // Rotate planets
+    if(!this->isStar) {
+        this->history.push_back(p);
+    }
+
+    // Planet motion
+
     sf::Sprite sprite{texture};
-    sf::Vector2f targetSize(this->r * 2, this->r * 2);
+    sf::Vector2f targetSize(this->r, this->r);
     sprite.setScale(
             targetSize.x / sprite.getLocalBounds().width,
             targetSize.y / sprite.getLocalBounds().height);
-
-
-    sf::Vector2<fpt> centeredPosition(this->p - sf::Vector2<fpt>{r, r});
-
-    // Rotate planets
-    if(!this->isStar) {
-        this->history.push_back(centeredPosition);
-        sprite.setPosition(centeredPosition.x, centeredPosition.y);
-        sprite.setRotation(this->rotation);
-        this->rotation = (this->rotation + 1) % 360;
-    }
-    sprite.setPosition(centeredPosition.x, centeredPosition.y);
+    sf::Vector2<fpt> spriteP(this->p - sf::Vector2<fpt>{r / 2, r / 2});
+    sprite.setPosition(spriteP.x, spriteP.y);
     window.draw(sprite);
 
     // Draw history

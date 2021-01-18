@@ -69,7 +69,7 @@ void Universe::simulate() {
             if (*i != *j) {
                 sf::Vector2<fpt> direction = i->p - j->p;
                 fpt distance = sfAbs(direction);
-                if (distance < i->r || distance < j->r) {
+                if (distance < i->r / 2 || distance < j->r / 2) {
                     collision = true;
                     break;
                 } else {
