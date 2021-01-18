@@ -12,7 +12,7 @@ else ()
     message(ERROR_FATAL "Can not find SFML")
 endif ()
 
-add_executable(gravitation gravitation.cpp utils.cpp utils.hpp)
+add_executable(gravitation main.cpp Planet.hpp Planet.cpp Universe.hpp Universe.cpp Utils.cpp Utils.hpp SizedVector.hpp)
 
 target_link_libraries(gravitation
         ${SFML_LIBRARIES}
